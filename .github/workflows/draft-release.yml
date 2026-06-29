@@ -1,0 +1,27 @@
+# Placeholder draft-release workflow
+#
+name: Draft actionmailer-balancer Release
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Semver bump type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+
+jobs:
+  draft-release:
+    name: Draft actionmailer-balancer Release (placeholder)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo inputs
+        env:
+          BUMP_TYPE: ${{ inputs.bump_type }}
+        run: |
+          echo "Placeholder draft-release workflow"
+          echo "bump_type=$BUMP_TYPE"
