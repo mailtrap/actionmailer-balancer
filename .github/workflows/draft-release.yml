@@ -1,4 +1,5 @@
-# Placeholder draft-release workflow
+# Drafts new actionmailer-balancer release: bumps the version, regenerates the changelog
+# from merged PRs, and opens a release PR against main.
 #
 name: Draft actionmailer-balancer Release
 on:
@@ -14,14 +15,93 @@ on:
           - major
         default: patch
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   draft-release:
-    name: Draft actionmailer-balancer Release (placeholder)
+    name: Draft actionmailer-balancer Release
     runs-on: ubuntu-latest
     steps:
-      - name: Echo inputs
-        env:
-          BUMP_TYPE: ${{ inputs.bump_type }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Read current version
+        id: read
         run: |
-          echo "Placeholder draft-release workflow"
-          echo "bump_type=$BUMP_TYPE"
+          version=$(ruby -r "./lib/actionmailer/balancer/version.rb" -e "puts ActionMailer::Balancer::VERSION")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: bump
+        uses: railsware/github-actions/compute-next-semver@master
+        with:
+          current: ${{ steps.read.outputs.version }}
+          bump-type: ${{ inputs.bump_type }}
+
+      - name: Abort if tag already exists
+        uses: railsware/github-actions/abort-if-tag-exists@master
+        with:
+          tag: ${{ steps.bump.outputs.tag }}
+
+      - name: Generate release notes
+        id: notes
+        uses: railsware/github-actions/generate-release-notes@master
+        with:
+          tag: ${{ steps.bump.outputs.tag }}
+
+      - name: Update version in version file
+        if: steps.notes.outputs.release_notes != ''
+        env:
+          NEXT: ${{ steps.bump.outputs.next }}
+        run: |
+          cat > "./lib/actionmailer/balancer/version.rb" <<EOF
+          # frozen_string_literal: true
+
+          module ActionMailer
+            module Balancer
+              VERSION = '${NEXT}'
+            end
+          end
+          EOF
+
+      - name: Install dependencies
+        if: steps.notes.outputs.release_notes != ''
+        run: |
+          bundle install
+
+      - name: Prepend new section to CHANGELOG.md
+        if: steps.notes.outputs.release_notes != ''
+        uses: railsware/github-actions/prepend-changelog@master
+        with:
+          version: ${{ steps.bump.outputs.next }}
+          release-notes: ${{ steps.notes.outputs.release_notes }}
+
+      - name: Commit, push, open PR
+        if: steps.notes.outputs.release_notes != ''
+        uses: railsware/github-actions/open-sdk-release-pr@master
+        with:
+          tag: ${{ steps.bump.outputs.tag }}
+          current: ${{ steps.read.outputs.version }}
+          next: ${{ steps.bump.outputs.next }}
+          bump-type: ${{ inputs.bump_type }}
+          release-notes: ${{ steps.notes.outputs.release_notes }}
+
+      - name: Create draft GitHub release
+        if: steps.notes.outputs.release_notes != ''
+        uses: railsware/github-actions/create-draft-github-release@master
+        with:
+          tag: ${{ steps.bump.outputs.tag }}
+          release-notes: ${{ steps.notes.outputs.release_notes }}
