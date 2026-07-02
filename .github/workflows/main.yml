@@ -1,6 +1,11 @@
 name: Ruby
 
-on: push
+on:
+  - push
+  - pull_request
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
