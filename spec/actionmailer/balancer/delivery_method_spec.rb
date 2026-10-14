@@ -178,8 +178,22 @@ RSpec.describe ActionMailer::Balancer::DeliveryMethod do # rubocop:disable RSpec
 
       it 'raises an error' do
         expect { deliver! }.to raise_error(
-          ActionMailer::Balancer::SettingsError, 'Weight for delivery method smtp must be a non-negative number, got -1'
+          ActionMailer::Balancer::SettingsError,
+          'Weight for delivery method smtp must be a finite, non-negative number, got -1'
         )
+      end
+    end
+
+    [Float::INFINITY, Float::NAN, Complex(1, 1)].each do |weight|
+      context "when weight is #{weight}" do
+        let(:settings) { { delivery_methods: [{ method: :smtp, weight: }] } }
+
+        it 'raises an error' do
+          expect { deliver! }.to raise_error(
+            ActionMailer::Balancer::SettingsError,
+            "Weight for delivery method smtp must be a finite, non-negative number, got #{weight.inspect}"
+          )
+        end
       end
     end
 

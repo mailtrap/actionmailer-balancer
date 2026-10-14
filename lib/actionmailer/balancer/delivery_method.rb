@@ -76,10 +76,10 @@ module ActionMailer
 
       def validate_weight!(name, weight)
         raise ActionMailer::Balancer::SettingsError, "No weight set for delivery method #{name}" unless weight
-        return if weight.is_a?(Numeric) && !weight.negative?
+        return if weight.is_a?(Numeric) && weight.real? && weight.finite? && !weight.negative?
 
         raise ActionMailer::Balancer::SettingsError,
-              "Weight for delivery method #{name} must be a non-negative number, got #{weight.inspect}"
+              "Weight for delivery method #{name} must be a finite, non-negative number, got #{weight.inspect}"
       end
     end
   end
