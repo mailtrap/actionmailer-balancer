@@ -207,6 +207,16 @@ RSpec.describe ActionMailer::Balancer::DeliveryMethod do # rubocop:disable RSpec
       end
     end
 
+    context 'when the weights add up to more than a Float can hold' do
+      let(:settings) do
+        { delivery_methods: [{ method: :smtp, weight: Float::MAX }, { method: :sendmail, weight: Float::MAX }] }
+      end
+
+      it 'raises an error' do
+        expect { deliver! }.to raise_error(ActionMailer::Balancer::SettingsError, 'The sum of weights is too large')
+      end
+    end
+
     context 'when the delivery method is unknown' do
       let(:settings) { { delivery_methods: [{ method: :smpt, weight: 1 }] } }
 
@@ -291,6 +301,42 @@ RSpec.describe ActionMailer::Balancer::DeliveryMethod do # rubocop:disable RSpec
 
       expect(interceptor.calls).to eq(1)
       expect(ActionMailer::Base.deliveries.last.subject).to eq('[STAGING] Hello')
+    end
+
+    it 'skips delivery when perform_deliveries is false' do
+      mailer.perform_deliveries = false
+      mailer.hello.deliver_now
+
+      expect(ActionMailer::Base.deliveries).to be_empty
+    ensure
+      mailer.perform_deliveries = true
+    end
+
+    context 'when the chosen delivery method raises' do
+      let(:failing) do
+        Class.new do
+          def initialize(*); end
+
+          def deliver!(_message) = raise('provider down')
+        end
+      end
+
+      before do
+        ActionMailer::Base.add_delivery_method(:failing, failing)
+        mailer.balancer_settings = { delivery_methods: [{ method: :failing, weight: 1 }] }
+      end
+
+      it 'raises when raise_delivery_errors is true' do
+        mailer.raise_delivery_errors = true
+
+        expect { mailer.hello.deliver_now }.to raise_error(RuntimeError, 'provider down')
+      end
+
+      it 'swallows the error when raise_delivery_errors is false' do
+        mailer.raise_delivery_errors = false
+
+        expect { mailer.hello.deliver_now }.not_to raise_error
+      end
     end
 
     it 'runs observers once and shows them the chosen delivery method' do
