@@ -1,3 +1,19 @@
+## [1.2.3] - 2026-11-12
+
+## What's Changed
+* Bump rails-html-sanitizer from 1.7.0 to 1.7.1 by @dependabot[bot] in https://github.com/mailtrap/actionmailer-balancer/pull/63
+* Bump loofah from 2.25.1 to 2.25.2 by @dependabot[bot] in https://github.com/mailtrap/actionmailer-balancer/pull/62
+* Bump mail from 2.8.1 to 2.9.1 by @dependabot[bot] in https://github.com/mailtrap/actionmailer-balancer/pull/64
+* run CI on pull requests by @oshchyhol in https://github.com/mailtrap/actionmailer-balancer/pull/65
+* Test against the latest patch of each Ruby by @IgorDobryn in https://github.com/mailtrap/actionmailer-balancer/pull/69
+* Bump rack from 3.2.6 to 3.2.8 by @dependabot[bot] in https://github.com/mailtrap/actionmailer-balancer/pull/67
+* Add release workflow by @IgorDobryn in https://github.com/mailtrap/actionmailer-balancer/pull/68
+
+## New Contributors
+* @oshchyhol made their first contribution in https://github.com/mailtrap/actionmailer-balancer/pull/65
+
+**Full Changelog**: https://github.com/mailtrap/actionmailer-balancer/compare/v1.2.2...v1.2.3
+
 ## [1.2.2] - 2026-07-02
 
 ## What's Changed
