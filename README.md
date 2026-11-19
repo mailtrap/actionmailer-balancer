@@ -61,6 +61,46 @@ end
 
 Now, just use ActionMailer as usual, and mail will be auto-balanced. 
 
+### Mixing SMTP and API delivery methods
+
+Delivery methods don't have to use SMTP. Any delivery method registered with ActionMailer works, including ones that send through a provider's HTTP API. For example, to keep 90% of mail on your current SMTP provider and move 10% to the [Mailtrap Email API](https://github.com/mailtrap/mailtrap-ruby#actionmailer):
+
+```ruby
+# Gemfile
+gem 'actionmailer-balancer'
+gem 'mailtrap' # registers the :mailtrap delivery method
+```
+
+```ruby
+Your::Application.configure do
+  config.action_mailer.delivery_method = :balancer
+  config.action_mailer.balancer_settings = {
+    delivery_methods: [
+      {
+        method: :smtp,
+        settings: {
+          address: 'smtp.example.com',
+          port: 587,
+          user_name: ENV.fetch('SMTP_USERNAME'),
+          password: ENV.fetch('SMTP_PASSWORD'),
+          authentication: :plain
+        },
+        weight: 90
+      },
+      {
+        method: :mailtrap,
+        settings: {
+          api_key: ENV.fetch('MAILTRAP_API_KEY')
+        },
+        weight: 10
+      }
+    ]
+  }
+end
+```
+
+`settings` are passed to each delivery method as they are, so use the keys that method expects (for `:mailtrap`, see the [mailtrap gem](https://github.com/mailtrap/mailtrap-ruby#actionmailer)). To move more mail to the new provider, change the weights. A weight of `0` turns a delivery method off without removing its configuration.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
