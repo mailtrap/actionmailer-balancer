@@ -28,7 +28,8 @@ module ActionMailer
         @delivery_methods = settings[:delivery_methods]
         @weights_sum = delivery_methods.sum { |method| method[:weight] }
         # Weights near Float::MAX add up to Infinity or, with Array#sum's compensated summation, NaN.
-        raise ActionMailer::Balancer::SettingsError, 'The sum of weights is too large' unless weights_sum.finite?
+        # A huge Integer sum stays finite itself but turns into Infinity once rand scales it.
+        raise ActionMailer::Balancer::SettingsError, 'The sum of weights is too large' unless weights_sum.to_f.finite?
         return if weights_sum.positive?
 
         raise ActionMailer::Balancer::SettingsError, 'At least one delivery method must have a weight above 0'

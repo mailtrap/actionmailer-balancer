@@ -207,13 +207,36 @@ RSpec.describe ActionMailer::Balancer::DeliveryMethod do # rubocop:disable RSpec
       end
     end
 
-    context 'when the weights add up to more than a Float can hold' do
+    [[Float::MAX, Float::MAX], [10**400, 1]].each do |first_weight, second_weight|
+      context "when weights #{first_weight.class} add up to more than a Float can hold" do
+        let(:settings) do
+          { delivery_methods: [{ method: :smtp, weight: first_weight }, { method: :sendmail, weight: second_weight }] }
+        end
+
+        it 'raises an error' do
+          expect { deliver! }.to raise_error(ActionMailer::Balancer::SettingsError, 'The sum of weights is too large')
+        end
+      end
+    end
+
+    context 'when rounding leaves the target past the last weight' do
       let(:settings) do
-        { delivery_methods: [{ method: :smtp, weight: Float::MAX }, { method: :sendmail, weight: Float::MAX }] }
+        {
+          delivery_methods: [
+            { method: :smtp, settings: { method_num: 1 }, weight: 1 },
+            { method: :sendmail, settings: { method_num: 2 }, weight: 0 }
+          ]
+        }
       end
 
-      it 'raises an error' do
-        expect { deliver! }.to raise_error(ActionMailer::Balancer::SettingsError, 'The sum of weights is too large')
+      # rand never returns 1.0, but it forces the branch that rounding can reach.
+      before { stub_random(1.0) }
+
+      it 'falls back to the last method with a positive weight' do
+        deliver!
+
+        expect(smtp).to have_received(:deliver!).with(message).once
+        expect(sendmail).not_to have_received(:deliver!)
       end
     end
 
