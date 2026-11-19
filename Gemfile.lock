@@ -91,14 +91,20 @@ GEM
     nokogiri (1.19.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    nokogiri (1.19.7-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.19.7-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.19.7-x86_64-linux-gnu)
       racc (~> 1.4)
     parallel (1.26.2)
     parser (3.3.4.2)
       ast (~> 2.4.1)
       racc
     prism (2.1.0)
+    prism (2.1.0-arm64-darwin)
     prism (2.1.0-x86_64-darwin)
+    prism (2.1.0-x86_64-linux-gnu)
     racc (1.8.1)
     rack (3.2.8)
     rack-session (2.1.2)
@@ -157,8 +163,10 @@ GEM
     useragent (0.16.11)
 
 PLATFORMS
+  arm64-darwin
   ruby
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   actionmailer-balancer!
