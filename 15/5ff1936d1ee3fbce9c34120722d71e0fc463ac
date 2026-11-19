@@ -1,0 +1,19 @@
+Gemfile
+  s_5b9e55c3d2459e::t_484a43898a53e2 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "155ff1936d1ee3fbce9c34120722d71e0fc463ac",
+  "prompts": {},
+  "sessions": {
+    "s_5b9e55c3d2459e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9fbff14-b5dd-439d-bb2a-5d1071f8aba1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}
