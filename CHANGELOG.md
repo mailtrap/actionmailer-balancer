@@ -1,3 +1,15 @@
+## [1.3.0] - 2026-11-19
+
+## What's Changed
+* Bump crass from 1.0.7 to 1.0.8 by @dependabot[bot] in https://github.com/mailtrap/actionmailer-balancer/pull/70
+* Fix double callbacks and validate balancer settings by @SergeyKorolev in https://github.com/mailtrap/actionmailer-balancer/pull/66
+* Update development dependencies to patched versions by @mklocek in https://github.com/mailtrap/actionmailer-balancer/pull/72
+
+## New Contributors
+* @SergeyKorolev made their first contribution in https://github.com/mailtrap/actionmailer-balancer/pull/66
+
+**Full Changelog**: https://github.com/mailtrap/actionmailer-balancer/compare/v1.2.3...v1.3.0
+
 ## [1.2.3] - 2026-11-12
 
 ## What's Changed

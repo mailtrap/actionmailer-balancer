@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    actionmailer-balancer (1.2.3)
+    actionmailer-balancer (1.3.0)
       actionmailer (> 4.0)
 
 GEM
