@@ -1,0 +1,21 @@
+spec/actionmailer/balancer/delivery_method_spec.rb
+  s_5b9e55c3d2459e::t_959e3650c8a2c4 210-222,224-229,232-239
+lib/actionmailer/balancer/delivery_method.rb
+  s_5b9e55c3d2459e::t_153ae228c38284 31-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14ca8fea43ac04ae95c459f9d96ba0dbde6e1167",
+  "prompts": {},
+  "sessions": {
+    "s_5b9e55c3d2459e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9fbff14-b5dd-439d-bb2a-5d1071f8aba1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Marcin Klocek <marcin.klocek@railsware.com>"
+    }
+  }
+}
