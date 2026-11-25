@@ -1,0 +1,32 @@
+# Managed centrally: changes made in this repository are overwritten.
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    # The cooldown delays version updates only. Security updates come at once.
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    # The cooldown delays version updates only. Security updates come at once.
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
